@@ -1,0 +1,19 @@
+{
+  "name": "first-backedn",
+  "version": "1.0.0",
+  "description": "first time making a full stack",
+  "keywords": [
+    "node"
+  ],
+  "license": "ISC",
+  "author": "Ashu Singh",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1"
+  }
+}
