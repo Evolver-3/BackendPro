@@ -8,8 +8,14 @@ const generateAccessAndRefreshToken=async(userId)=>{
   try{
     const user =await User.findById(userId)
 
+    // console.log(user)
+
     const accessToken=user.generateAccessToken()
     const refreshToken=user.generateRefreshToken()
+
+   
+    // console.log("Access",accessToken)
+    // console.log("Refresh",refreshToken)
 
     user.refreshToken=refreshToken
     await user.save({validateBeforeSave:false})
@@ -17,7 +23,9 @@ const generateAccessAndRefreshToken=async(userId)=>{
     return {accessToken,refreshToken}
 
   }catch(error){
-    throw new ApiError("Something went wrong while generating access and refresh token!!", 500)
+    
+    console.log("Error", error)
+    throw new ApiError(500,"Something went wrong while generating access and refresh token!!")
   }
 }
 
@@ -85,42 +93,6 @@ return res.status(201).json(
   
 })
 
-// const loginUser=asyncHandler(async(req,res)=>{
-  
-// const {email, username, password}=req.body
-// if(!username || !email){
-//   throw new ApiError("Email and username are required !!",400)
-// }
-
-// const user =await User.findOne({
-//   $or:[{email},{username}]
-// })
-
-// if(!user){
-//   throw new ApiError("Invalid credentials !! ", 404)
-// }
-
-// const isPasswordCorrect=await user.isPasswordCorrect(password)
-
-// if(!isPasswordCorrect){
-//   throw new ApiError("Password incorrect",400)
-// }
-
-// const {accessToken,refreshToken}=await generateAccessAndRefreshToken(user._id)
-
-// const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
-
-// const options={
-//   httpOnly:true,
-//   secure:true
-// }
-
-// return res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
-//   new ApiResponse(200,{
-//     user:loggedInUser,accessToken,refreshToken
-//   },"User logged in successfully !!")
-// )
-// })
 
 const loginUser=asyncHandler(async(req,res)=>{
 
@@ -137,6 +109,8 @@ const loginUser=asyncHandler(async(req,res)=>{
   if(!user){
     throw new ApiError("Invlid credentials !!", 404)
   }
+  // console.log(user)
+  
 
   const isPasswordCorrect=await user.isPasswordCorrect(password)
 
@@ -144,16 +118,16 @@ const loginUser=asyncHandler(async(req,res)=>{
     throw new ApiError("Password incorrect !!", 400)
   }
   
+  // console.log(isPasswordCorrect)
+
   const {accessToken,refreshToken}=await generateAccessAndRefreshToken(user._id)
 
   const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
 
   const options={
     httpOnly:true,
-    secure:true
-    
+    secure:false
   }
-
   
 
   return res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
